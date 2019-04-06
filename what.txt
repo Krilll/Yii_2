@@ -1,0 +1,13 @@
+Первые 2 пункта для тех кто НЕ установил через вагрант.
++1) Установить базовое приложение https://www.yiiframework.com/doc/guide/2.0/ru/start-installation.
++2) Настроить веб-сервер, см. https://www.yiiframework.com/doc/guide/2.0/ru/start-installation#configuring-web-servers
++3) Создать TestController с одним методом actionIndex, попробовать вернуть из метода текст и результат выполнения renderContent().
++4) Добавить в главное меню (в layout) ссылку Test на созданный action TestController-а.
++5) Настроить "красивые урлы" - раскоментировать urlManager в конфиге, посмотреть как изменились урлы в меню.
++6) Создать вьюху "views/test/index.php" с произвольным содержимом и отрендерить ее в actionIndex TestController-а.
+Дополнительно
+
++7) Создать класс модели Product со свойствами - ид, имя, категория и цена.
++8) Создать в методе actionIndex TestController-а экземпляр модели Product, з
+аполнить его свойства значениями, передать во вьюху и там вывести с помощью виджета \yii\widgets\DetailView.
++9) Описать переданную переменную с моделью в PHPDoc вьюхи.
