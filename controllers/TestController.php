@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
-use yii\web\Controller;
+use app\components\TestService;
 use app\models\Product;
+use yii\web\Controller;
+
+
 
 class TestController extends Controller
 {
@@ -14,22 +17,28 @@ class TestController extends Controller
      */
     public function actionIndex()
     {
-		$text = 'Hello, world!';
+		//$db = Yii::createObject($product);
+		//return $db;
+		//return \Yii::$app->test->show();
 		
-		$product = new Product();
+		//$text = new TestService(['text' => 'Hello, world!']);
+		
+		//$text->getId();
+		
+		//$text = 'Hello, world!';
+		
+		/*$product = new Product();
 		$product -> id = 1;
 		$product -> name = 'Hello, world!';
 		$product -> category = 'T-shirt';
-		$product -> price = 200;
+		$product -> price = 200;*/
 		
         return $this->render('index',
-		['text' => $text,
-		'product' => $product,
+		['text' => \Yii::$app->test->show(),
 		]);
+		
+		
+		
     }
-
-   
-
-
     
 }

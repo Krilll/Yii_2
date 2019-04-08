@@ -7,4 +7,3 @@ use yii\web\View;
 ?>
 
 <h1><?= $text ?></h1>
-<?= \yii\widgets\DetailView::widget(['model' => $product]) ?>
