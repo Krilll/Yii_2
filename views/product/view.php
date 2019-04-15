@@ -33,17 +33,12 @@ $this->params['breadcrumbs'][] = $this->title;
 			[
 				'attribute' => 'name',
 				'format' => 'html',
-				'value' => function (\app\models\Product $model) {
-					return '<b>'.$model->name.'</b>'; 
-				},
+				'value' => '<b>'.$model->name.'</b>',
 			],
             'price',
 			[	
 				'attribute' => 'created_at',
 				'format' => 'date',
-				'value' => function (\app\models\Product $model) {
-					return Yii::$app->formatter->format($model->created_at, 'date'); 
-				},
 			],
         ],
     ]) ?>
