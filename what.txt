@@ -1,27 +1,54 @@
-+01) зачем Yii::$app->formatter->format если 'format' => 'date',?
-+02) анонимная функция в detailview не особо нужна
-'value' => function (\app\models\Product $model) {
++1) Сделать 3 миграции для создания 3 таблиц с
+ описанием столбцов как было показано на уроке, 
+ метод для отката реализовать обязательно.
+Для работы с приложением через консоль в Windows используется файл yii.bat.
+Свойство NULL у поля указывать не обязательно - будет такое по умолчанию.
+Для поля id нужен один метод primaryKey() - в нем описывается все необходимое.
+таблица user, поля:
 
-+1) Изучить методы хелперов, в первую очередь по этому описанию
- https://www.yiiframework.com/doc/guide/2.0/ru/helper-overview, 
- особенное внимание к ArrayHelper.
-+2) Настроить правила в rules() модели Product и проверить на странице редактирования
- (product/create) как они работают.
-Правила:
-name - длина до 20 символов, необходимо обрезать пробелы (trim) и вырезать тэги (strip_tags()),
-сделать это нужно с помощью анонимной функции - смотрите описание валидатора FilterValidator.
-price - только целые числа больше 0 и меньше 1000
-+3) Создать в Product метод scenarios() указав, что для сценария по умолчанию 
-активный атрибут только name - проверить изменения в работе формы,
-т.е. как теперь загружаются и проверяются значения атрибутов.
-+4) Изменить в форме модели Product тип поля для атрибута name - сделать в виде выпадаюшего списка,
-в котором значения 111,222,333, а подписи, т.е. то что видно в списке при выборе - "первый", "второй", "третий".
-Проверить, что при сохранении модели в базу записывается одно из значений 111,222,333 и
-при последующем показе формы в списке выбирается то значение, которое сохранили.
+    id - integer, primaryKey
+    username - varchar(255), not null
+    password_hash - varchar(255), not null
+    auth_key - varchar(255), null
+    creator_id - integer, not null
+    updater_id - integer, null
+    created_at - integer, not null
+    updated_at - integer, null
+
+таблица task, поля:
+
+    id - integer, primaryKey
+    title - varchar(255), not null
+    description - text, not null
+    creator_id - integer, not null
+    updater_id - integer, null
+    created_at - integer, not null
+    updated_at - integer, null
+
+таблица task_user, поля:
+
+    id - integer, primaryKey
+    task_id - integer, not null
+    user_id - integer, not null
+
++2) Накатить миграции - убедиться, что все таблицы 
+создались правильно, откатить миграции - 
+проверить результат и накатить снова.
++3) В экшене insert TestController-а 
+через Yii::$app->db->createCommand()->insert() 
+вставить несколько записей в таблицу user,
+в поле password_hash можно вставить произвольные значения, 
+поле id заполняется автоматически.
++4) Используя \yii\db\Query в экшене 
+select TestController выбрать из user:
+а) Запись с id=1
+б) Все записи с id>1 отсортированные по имени (orderBy())
+в) количество записей.
+Выборку можно вывести через VarDumper.
 Дополнительно
 
-+5) Назначить в экшенах actionCreate и actionUpdate 
-ProductController-а у модели разные сценарии.
-+6) Настроить Product модель так, что бы значение атрибута name 
-не изменялось при изменении данных в actionUpdate 
-даже если поле name в форме есть.
++5) В экшене insert TestController-а через Yii::$app->db->createCommand()->batchInsert() 
+вставить одним вызовом сразу 3 записи в таблицу task, 
+в поле creator_id подставив реальное значение id из user (просто числом).
+6) Используя \yii\db\Query в экшене select TestController-а вывести содержимое task
+с присоединенными по полю creator_id записями из таблицы user (innerJoin())
