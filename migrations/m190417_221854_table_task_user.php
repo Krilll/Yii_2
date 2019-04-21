@@ -23,9 +23,7 @@ class m190417_221854_table_task_user extends Migration
      * {@inheritdoc}
      */
     public function safeDown()
-    {
-        echo "m190417_221854_table_task_user cannot be reverted.\n";
-		
+    {	
 		$this->dropTable('task_user');
         return true;
     }

@@ -28,8 +28,6 @@ class m190417_221048_table_task extends Migration
      */
     public function safeDown()
     {
-        echo "m190417_221048_table_task cannot be reverted.\n";
-
 		$this->dropTable('task');
         return true;
     }

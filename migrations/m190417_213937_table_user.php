@@ -28,8 +28,6 @@ class m190417_213937_table_user extends Migration
      */
     public function safeDown()
     {
-        echo "m190417_213937_table_user cannot be reverted.\n";
-
 		$this->dropTable('user');
         return true;
     }
