@@ -1,0 +1,30 @@
+2019-04-24 01:56:38 [192.168.83.1][5][-][info][info] [
+    'levels' => 'info',
+    'categories' => 'info',
+    'message' => 'Пользователь авторизован.',
+]
+    in /app/controllers/UserController.php:157
+2019-04-24 02:02:04 [192.168.83.1][5][-][info][info] [
+    'levels' => 'info',
+    'categories' => 'info',
+    'message' => 'Пользователь авторизован.',
+]
+    in /app/controllers/UserController.php:158
+2019-04-24 02:02:44 [192.168.83.1][6][-][info][info] [
+    'levels' => 'info',
+    'categories' => 'info',
+    'message' => 'Пользователь авторизован.',
+]
+    in /app/controllers/UserController.php:158
+2019-04-24 02:05:25 [192.168.83.1][5][-][info][info] [
+    'levels' => 'info',
+    'categories' => 'info',
+    'message' => 'Пользователь авторизован.',
+]
+    in /app/controllers/UserController.php:171
+2019-04-24 02:06:23 [192.168.83.1][6][-][info][info] [
+    'levels' => 'info',
+    'categories' => 'info',
+    'message' => 'Пользователь авторизован.',
+]
+    in /app/controllers/UserController.php:163

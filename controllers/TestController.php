@@ -6,8 +6,6 @@ use app\components\TestService;
 use app\models\Product;
 use yii\web\Controller;
 
-
-
 class TestController extends Controller
 {
     /**

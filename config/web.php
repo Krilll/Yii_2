@@ -37,9 +37,22 @@ $config = [
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
+			
+			
+			/*(target) для записи в лог факта авторизации пользователя.
+Уровень (level) сделать info, категорию и файл назвать, 
+например login. После успешного логина нужно 
+добавлять сообщение с любым текстом и указанными уровнем-категорией.*/
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                ],
+				[
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+					'categories' => ['info'],
+					'logFile' => '@runtime/logs/login.log',
+					'logVars' => [], 
                 ],
             ],
         ],

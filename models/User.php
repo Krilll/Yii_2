@@ -3,6 +3,10 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\web\IdentityInterface;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "user".
@@ -17,17 +21,88 @@ use Yii;
  * @property int $updated_at
  *
  * @property Task[] $tasks
- * @property Task[] $tasks0
+ * @property Task[] $tasks0 
  * @property TaskUser[] $taskUsers
  */
-class User extends \yii\db\ActiveRecord
+ 
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+	public $password;
+	
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'user';
+    }
+	
+	public function behaviors()
+    {
+        return [
+			[
+				'class' => BlameableBehavior::className(),
+				'createdByAttribute' => 'creator_id',
+				'updatedByAttribute' => 'updater_id',
+			],
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                // если вместо метки времени UNIX используется datetime:
+                // 'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+	
+	/**
+     * Finds an identity by the given ID.
+     *
+     * @param string|int $id the ID to be looked for
+     * @return IdentityInterface|null the identity object that matches the given ID.
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+	
+    /**
+     * Finds an identity by the given token.
+     *
+     * @param string $token the token to be looked for
+     * @return IdentityInterface|null the identity object that matches the given token.
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+		return false;
+        //return static::findOne(['access_token' => $token]);
+    }
+
+	/**
+     * @return int|string current user ID
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string current user auth key
+     */
+    public function getAuthKey()
+    {
+        return $this->auth_key;
+    }
+
+    /**
+     * @param string $authKey
+     * @return bool if auth key is valid for current user
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
     }
 
     /**
@@ -36,9 +111,9 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'password_hash', 'creator_id', 'created_at'], 'required'],
+            [['username', 'password'], 'required'],
             [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
-            [['username', 'password_hash', 'auth_key'], 'string', 'max' => 255],
+            [['username', 'auth_key'], 'string', 'max' => 255],
         ];
     }
 
@@ -91,4 +166,45 @@ class User extends \yii\db\ActiveRecord
     {
         return new \app\models\query\UserQuery(get_called_class());
     }
+	
+	public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+			if ($this->password) {			
+				$this->password_hash = \Yii::$app->getSecurity()->generatePasswordHash($this->password);
+			}
+			if ($this->isNewRecord) {
+                $this->auth_key = \Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
+    }
+	
+	/**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return true if password provided is valid for current user
+	 * @return false if password provided is not valid for current user
+     */
+	public function validatePassword($password) {
+		
+		if (Yii::$app->getSecurity()->validatePassword($password, $this->password_hash)) {
+			return true;
+		} else {
+			return false;	
+		}
+	}
+	
+	 /**
+     * Finds user by username
+     *
+     * @param string $name
+     * @return static|null
+     */
+	public function findByUsername($name) {
+		
+		return static::findOne(['username' => $name]);
+	}
 }

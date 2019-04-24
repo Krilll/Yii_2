@@ -3,8 +3,9 @@
 namespace app\models;
 
 use Yii;
-//use \User;
-//use \TaskUser;
+use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "task".
@@ -20,7 +21,7 @@ use Yii;
  * @property User $creator
  * @property User $updater
  * @property TaskUser[] $taskUsers
- * @property AccessedUser[] $AccessedUsers
+ * @property User[] $AccessedUsers
  */
 class Task extends \yii\db\ActiveRecord
 {
@@ -31,6 +32,26 @@ class Task extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'task';
+    }
+	
+	public function behaviors()
+    {
+        return [
+			[
+				'class' => BlameableBehavior::className(),
+				'createdByAttribute' => 'creator_id',
+				'updatedByAttribute' => 'updater_id',
+			],
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                // если вместо метки времени UNIX используется datetime:
+                // 'value' => new Expression('NOW()'),
+            ],
+        ];
     }
 
     /**
