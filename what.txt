@@ -1,37 +1,15 @@
-+ Task::find() ->innerJoin('user', 'task.creator_id = user.id') 
-это делает по другому - посмотрите еще раз про жадную загрузку
-+1) Подключить в классах User и Task поведение TimestampBehavior
-+2) Создать в классе User свойство password 
-+и добавить его в одно из правил rules(), 
-+ убрать password_hash из правил.
-+3) Имплементировать в User интерфейс IdentityInterface 
-и реализовать необходимые методы как показано здесь 
-https://www.yiiframework.com/doc/guide/2.0/ru/security-authentication#implementing-identity
-+4) Реализовать там же в методе beforeSave хэширование 
-непустого пароля в аттрибут password_hash 
-(https://www.yiiframework.com/doc/guide/2.0/ru/security-passwords) 
-и заполнение случайной строкой аттрибута auth_key при создании записи 
-(см. пример beforeSave по ссылке 3 пункта).
-+5) Реализовать в User методы validatePassword($password) 
-и findByUsername($name). Первый проверит пароль сравнив 
-его хэш с текушим значением из атрибута password_hash, 
-проверка описана по последней ссылке. 
-Второй вернет модель пользователя по значению username.
-+6) Изменить форму редактирования пользователя, 
-оставив только поля username, password. 
-Cоздать пользователя (creator_id заполнить пока в контроллере) 
-и проверить работу аутентификации с его данными.
++ 1) return Yii::$app->getSecurity()->validatePassword...
+2) РѕС„РѕСЂРјР»РµРЅРёРµ РѕС‚СЃС‚СѓРїРѕРІ
++ 3) РіРґРµ РїСЂРѕРёСЃС…РѕРґРёС‚ Р·Р°РїРёСЃСЊ РІ Р»РѕРі
+=> UserController.php => public function actionLogin()
+=> if ($model->load(Yii::$app->request->post()) && $model->login()) {
+		$log = [
+			'levels' => 'info',
+			'categories' => 'info',
+			'message' => 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.'
+		];
+		Yii::info($log, 'info'); 
+	}
 
-+7) Подключить поведение BlameableBehavior в классах User и Task.
-+8) Ограничить с помощью AccessControl доступ только 
-для авторизованных пользователей ко всем трем созданным в прошлом ДЗ контроллерам.
-
-Дополнительно
-
-+9) Создать в конфиге у компонента log дополнительную цель 
-(target) для записи в лог факта авторизации пользователя.
-Уровень (level) сделать info, категорию и файл назвать, 
-например login. После успешного логина нужно 
-добавлять сообщение с любым текстом и указанными уровнем-категорией.
 
 

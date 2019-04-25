@@ -51,8 +51,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
-                // если вместо метки времени UNIX используется datetime:
-                // 'value' => new Expression('NOW()'),
             ],
         ];
     }
@@ -189,12 +187,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	 * @return false if password provided is not valid for current user
      */
 	public function validatePassword($password) {
-		
-		if (Yii::$app->getSecurity()->validatePassword($password, $this->password_hash)) {
-			return true;
-		} else {
-			return false;	
-		}
+		return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash))		
 	}
 	
 	 /**
@@ -204,7 +197,6 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return static|null
      */
 	public function findByUsername($name) {
-		
 		return static::findOne(['username' => $name]);
 	}
 }
