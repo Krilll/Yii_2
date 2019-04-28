@@ -22,6 +22,15 @@ class TaskUserController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -75,7 +84,9 @@ class TaskUserController extends Controller
         $model->task_id = $taskId;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', 'Your gift of a task was success');
+            return $this->redirect(['task/my']);
+           // return $this->redirect(['view', 'id' => $model->id]);
         }
 
         $users = User::find()

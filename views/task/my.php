@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' => '{view} {update} {delete} {give}',
                     'buttons' => [
                         'give' => function ($url, $model, $key) {
-                            $icon = \yii\bootstrap\Html::icon('indent-left');
+                            $icon = \yii\bootstrap\Html::icon('paste');
                             return Html::a($icon,['task-user/create','taskId' => $model->id]);
                         },
                     ],

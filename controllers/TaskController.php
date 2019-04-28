@@ -20,7 +20,7 @@ class TaskController extends Controller
     public function behaviors()
     {
         return [
-           /* 'access' => [
+           'access' => [
 				'class' => \yii\filters\AccessControl::className(),
 				'rules' => [
 					[
@@ -28,7 +28,7 @@ class TaskController extends Controller
 						'roles' => ['@'],
 					],
 				],
-			],*/
+			],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -78,7 +78,10 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->session->setFlash('success', 'Your creation of a task was success');
+            return $this->redirect(['my']);
+
+            //return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
