@@ -29,6 +29,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
 	public $password;
 	
+	const SCENARIO_CREATE = 'create';
+	const SCENARIO_UPDATE = 'update';
+	
     /**
      * {@inheritdoc}
      */
@@ -109,7 +112,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password'], 'required'],
+            [['username', 'password'], 'required', 'on' => 'create'],
+			[['username'], 'required', 'on' => 'update'],
             [['creator_id', 'updater_id', 'created_at', 'updated_at'], 'integer'],
             [['username', 'auth_key'], 'string', 'max' => 255],
         ];
@@ -187,7 +191,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 	 * @return false if password provided is not valid for current user
      */
 	public function validatePassword($password) {
-		return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash))		
+		return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);		
 	}
 	
 	 /**
