@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Task;
+//use app\models\User;
+//use app\models\TaskUser;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -14,6 +16,7 @@ use yii\filters\VerbFilter;
  */
 class TaskController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -39,6 +42,14 @@ class TaskController extends Controller
     }
 
     /**
+     * Lists a home page.
+     * @return mixed
+     */
+    public function actionHome()
+    {
+        return $this->render('home');
+    }
+    /**
      * Lists all your Task models.
      * @return mixed
      */
@@ -54,6 +65,44 @@ class TaskController extends Controller
         ]);
     }
 
+    /**
+     * Lists all your shared Task models.
+     * @return mixed
+     */
+    public function actionShared()
+    {
+        $user = Task::find()
+            ->byCreator(Yii::$app->user->id)
+            ->innerJoinWith(Task::TASK_USERS);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $user,
+        ]);
+
+
+        return $this->render('shared', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Lists all your accessed Task models.
+     * @return mixed
+     */
+    public function actionAccessed()
+    {
+        $user = Task::find()
+            ->innerJoinWith(Task::TASK_USERS)
+        ->where(['task_user.user_id' => Yii::$app->user->id]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $user,
+        ]);
+
+
+        return $this->render('accessed', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
 
     /**
      * Displays a single Task model.
@@ -63,9 +112,40 @@ class TaskController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
+
+        if( $model->creator_id !==  Yii::$app->user->id &&
+            $model->getTaskUsers()->exists() === false)
+        {
+                Yii::$app->session->setFlash('error', 'It is a stranger task');
+                return $this->redirect(['site/index']);
+        }
+
+        if( $model->creator_id === Yii::$app->user->id) {
+            $sharedUsers = $model->getTaskUsers();
+            $dataProvider = new ActiveDataProvider([
+                'query' => $sharedUsers,
+            ]);
+            $titleTwo = 'Shared the task to ...';
+
+
+
+            return $this->render('view', [
+                'model' => $model,
+                'titleTwo' => $titleTwo,
+                'users' => true,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                'model' => $model,
+                'titleTwo' => '',
+                'users' => false,
+                'dataProvider' => false,
         ]);
+
     }
 
     /**
@@ -80,7 +160,6 @@ class TaskController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Your creation of a task was success');
             return $this->redirect(['my']);
-
             //return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -100,13 +179,20 @@ class TaskController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if($model->creator_id !==  Yii::$app->user->id) {
+            Yii::$app->session->setFlash('error', 'It is a stranger task');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Your update of a task was success');
+            return $this->redirect(['my']);
+        }
+
         return $this->render('update', [
-            'model' => $model,
+                'model' => $model,
         ]);
+
     }
 
     /**
@@ -117,9 +203,16 @@ class TaskController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
-        return $this->redirect(['index']);
+        if($model->creator_id !==  Yii::$app->user->id) {
+            Yii::$app->session->setFlash('error', 'It is a stranger task');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+        if($this->findModel($id)->delete()) {
+            Yii::$app->session->setFlash('success', 'Your removal of a task was success');
+            return $this->redirect(['my']);
+        }
     }
 
     /**

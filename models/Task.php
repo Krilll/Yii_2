@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use Yii;
+//use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -26,6 +26,7 @@ use yii\behaviors\BlameableBehavior;
 class Task extends \yii\db\ActiveRecord
 {
 	const TASK_USERS = 'taskUsers';
+    const ACCESSED_USERS = 'accessedUsers';
     /**
      * {@inheritdoc}
      */

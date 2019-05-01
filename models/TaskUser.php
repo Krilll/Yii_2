@@ -66,6 +66,17 @@ class TaskUser extends \yii\db\ActiveRecord
     }
 
     /**
+     * Finds an identity by the given ID.
+     *
+     * @param string|int $id the ID to be looked for
+     * @return IdentityInterface|null the identity object that matches the given ID.
+     */
+    public function getId($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
      * {@inheritdoc}
      * @return \app\models\query\TaskUserQuery the active query used by this AR class.
      */

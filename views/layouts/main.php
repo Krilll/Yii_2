@@ -10,6 +10,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -38,10 +39,11 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Home', 'url' => ['/task/home']],
             ['label' => 'Create a task', 'url' => ['/task/create']],
             ['label' => 'Tasks', 'url' => ['task/my']],
-			['label' => 'Test', 'url' => ['/test/index']],
+			['label' => 'Shared tasks', 'url' => ['/task/shared']],
+            ['label' => 'Accessed tasks', 'url' => ['/task/accessed']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

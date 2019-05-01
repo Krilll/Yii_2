@@ -6,9 +6,9 @@ use Yii;
 use app\models\TaskUser;
 use app\models\Task;
 use app\models\User;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 
 /**
@@ -35,38 +35,12 @@ class TaskUserController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                    'delete-all' => ['POST'],
                 ],
             ],
         ];
     }
 
-    /**
-     * Lists all TaskUser models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => TaskUser::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single TaskUser model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
 
     /**
      * Creates a new TaskUser model.
@@ -78,7 +52,7 @@ class TaskUserController extends Controller
     {
         $model = Task::findOne($taskId);
         if(!$model || $model->creator_id !== Yii::$app->user->id) {
-            throw new ForbiddenHttpException();
+            throw new ForbiddenHttpException('Доступ закрыт.');
         }
         $model = new TaskUser();
         $model->task_id = $taskId;
@@ -102,37 +76,50 @@ class TaskUserController extends Controller
     }
 
     /**
-     * Updates an existing TaskUser model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Deletes an existing TaskUser model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws ForbiddenHttpException'Доступ закрыт.' if the task cannot be found or user_id !== creator_id
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = TaskUser::getId($id);
+        $task = $model->getTask()
+         ->select('creator_id')->column();
+        $taskId = $model->getTask()
+            ->select('id')->column();
 
-        return $this->redirect(['index']);
+        if( $task[0] != Yii::$app->user->id) {
+            throw new ForbiddenHttpException('Доступ закрыт.');
+        }
+        $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('success',
+            'Your delete of the relation of the task was success');
+
+        return $this->redirect(['task/view', 'id' => $taskId[0]]);
+    }
+    /**
+     * Deletes all shared of this TaskUser model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws ForbiddenHttpException if the task cannot be found or user_id !== creator_id
+     */
+    public function actionDeleteAll($id)
+    {
+        $model = Task::findOne($id);
+
+        if(!$model || $model->creator_id !== Yii::$app->user->id) {
+            throw new ForbiddenHttpException();
+        }
+
+        $model->unlinkAll(Task::ACCESSED_USERS, true);
+
+        Yii::$app->session->setFlash('success',
+            'Your delete of all relations of the task was success');
+
+        return $this->redirect(['task/shared']);
     }
 
     /**

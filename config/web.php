@@ -55,6 +55,12 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<controller>/<id:\d+>' => '<controller>/view',
+                '<controller>/update/<id:\d+>' => '<controller>/update',
+                '<controller>/delete/<id:\d+>' => '<controller>/delete',
+                '<controller>/create/<taskId:\d+>' => '<controller>/create',
+                '<controller>/delete-all/<id:\d+>' => '<controller>/delete-all',
+
             ],
         ],
 		'test' => [

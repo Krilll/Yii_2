@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $model app\models\TaskUser */
 /* @var $users array*/
 
-$this->title = 'Create Task User';
-$this->params['breadcrumbs'][] = ['label' => 'Task Users', 'url' => ['index']];
+$this->title = 'Give a task to user';
+$this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['task/my']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="task-user-create">
