@@ -7,6 +7,11 @@ use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Task */
+/* @var $users boolean */
+/* @var $titleTwo string */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $modelTwo \app\models\TaskUser */
+/* @var $icon \yii\bootstrap\Html */
 
 $this->title = $model->title;
 

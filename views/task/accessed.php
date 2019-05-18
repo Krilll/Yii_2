@@ -30,8 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 'value' => function(\app\models\Task $model) {
 
-                    return Html::a(join($model->getCreator()->select('username')->column()),
-                        ['/user/view/', 'id' => $model->creator_id]);
+                    return Html::a ($model->creator->username);
+                    //(join($model->getCreator()->select('username')->column()),
+                        //['/user/view/', 'id' => $model->creator_id]);
                 }
             ],
             'created_at:datetime',

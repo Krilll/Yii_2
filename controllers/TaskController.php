@@ -116,7 +116,7 @@ class TaskController extends Controller
 
 
         if( $model->creator_id !==  Yii::$app->user->id &&
-            $model->getTaskUsers()->exists() === false)
+            $model->getTaskUsers()->where(['user_id'=>\Yii::$app->user->id])->exists())
         {
                 Yii::$app->session->setFlash('error', 'It is a stranger task');
                 return $this->redirect(['site/index']);
